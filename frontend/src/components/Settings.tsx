@@ -19,6 +19,10 @@ export function Settings({ isOpen, onClose }: SettingsProps) {
   const [claudeExecutablePath, setClaudeExecutablePath] = useState('');
   const [defaultPermissionMode, setDefaultPermissionMode] = useState<'approve' | 'ignore'>('ignore');
   const [autoCheckUpdates, setAutoCheckUpdates] = useState(true);
+  const [httpProxy, setHttpProxy] = useState('');
+  const [httpsProxy, setHttpsProxy] = useState('');
+  const [allProxy, setAllProxy] = useState('');
+  const [noProxy, setNoProxy] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'general' | 'notifications' | 'stravu'>('general');
@@ -42,6 +46,10 @@ export function Settings({ isOpen, onClose }: SettingsProps) {
       setClaudeExecutablePath(data.claudeExecutablePath || '');
       setDefaultPermissionMode(data.defaultPermissionMode || 'ignore');
       setAutoCheckUpdates(data.autoCheckUpdates !== false); // Default to true
+      setHttpProxy(data.httpProxy || '');
+      setHttpsProxy(data.httpsProxy || '');
+      setAllProxy(data.allProxy || '');
+      setNoProxy(data.noProxy || '');
     } catch (err) {
       setError('Failed to load configuration');
     }
@@ -59,7 +67,11 @@ export function Settings({ isOpen, onClose }: SettingsProps) {
         systemPromptAppend: globalSystemPrompt, 
         claudeExecutablePath,
         defaultPermissionMode,
-        autoCheckUpdates
+        autoCheckUpdates,
+        httpProxy,
+        httpsProxy,
+        allProxy,
+        noProxy
       });
 
       if (!response.success) {
@@ -283,6 +295,78 @@ export function Settings({ isOpen, onClose }: SettingsProps) {
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Full path to the claude executable. Leave empty to use the claude command from PATH. This is useful if Claude is installed in a non-standard location.
             </p>
+          </div>
+
+          <div className="space-y-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Proxy Configuration</h3>
+            
+            <div>
+              <label htmlFor="httpProxy" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                HTTP Proxy
+              </label>
+              <input
+                id="httpProxy"
+                type="text"
+                value={httpProxy}
+                onChange={(e) => setHttpProxy(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
+                placeholder="http://proxy.example.com:8080"
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Proxy server for HTTP requests. Leave empty if no proxy is needed.
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor="httpsProxy" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                HTTPS Proxy
+              </label>
+              <input
+                id="httpsProxy"
+                type="text"
+                value={httpsProxy}
+                onChange={(e) => setHttpsProxy(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
+                placeholder="http://proxy.example.com:8080"
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Proxy server for HTTPS requests. Usually the same as HTTP proxy.
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor="allProxy" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                All Proxy (Optional)
+              </label>
+              <input
+                id="allProxy"
+                type="text"
+                value={allProxy}
+                onChange={(e) => setAllProxy(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
+                placeholder="socks5://proxy.example.com:1080"
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Proxy server for all protocols. This overrides HTTP and HTTPS proxy settings.
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor="noProxy" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                No Proxy (Optional)
+              </label>
+              <input
+                id="noProxy"
+                type="text"
+                value={noProxy}
+                onChange={(e) => setNoProxy(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700"
+                placeholder="localhost,127.0.0.1,*.local"
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Comma-separated list of hosts that should bypass the proxy.
+              </p>
+            </div>
           </div>
 
           <div>

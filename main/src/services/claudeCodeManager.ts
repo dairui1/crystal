@@ -450,13 +450,49 @@ export class ClaudeCodeManager extends EventEmitter {
         shellPath = getShellPath();
       }
       
+      // Get proxy configuration from config manager
+      const config = this.configManager?.getConfig();
+      const proxyEnv: { [key: string]: string } = {};
+      
+      if (config?.httpProxy) {
+        proxyEnv.HTTP_PROXY = config.httpProxy;
+        proxyEnv.http_proxy = config.httpProxy; // Some tools use lowercase
+      }
+      
+      if (config?.httpsProxy) {
+        proxyEnv.HTTPS_PROXY = config.httpsProxy;
+        proxyEnv.https_proxy = config.httpsProxy; // Some tools use lowercase
+      }
+      
+      if (config?.allProxy) {
+        proxyEnv.ALL_PROXY = config.allProxy;
+        proxyEnv.all_proxy = config.allProxy; // Some tools use lowercase
+      }
+      
+      if (config?.noProxy) {
+        proxyEnv.NO_PROXY = config.noProxy;
+        proxyEnv.no_proxy = config.noProxy; // Some tools use lowercase
+      }
+      
+      // Log proxy configuration in verbose mode
+      if (Object.keys(proxyEnv).length > 0 && this.logger?.verbose) {
+        this.logger.verbose(`[ClaudeManager] Proxy configuration applied:`);
+        Object.entries(proxyEnv).forEach(([key, value]) => {
+          if (key === key.toUpperCase()) { // Only log uppercase versions to avoid duplication
+            this.logger?.verbose(`  ${key}: ${value}`);
+          }
+        });
+      }
+      
       const env = {
         ...process.env,
         PATH: shellPath,
         // Ensure MCP-related environment variables are preserved
         MCP_SOCKET_PATH: this.permissionIpcPath || '',
         // Add debug mode for MCP if verbose logging is enabled
-        ...(this.configManager?.getConfig()?.verbose ? { MCP_DEBUG: '1' } : {})
+        ...(this.configManager?.getConfig()?.verbose ? { MCP_DEBUG: '1' } : {}),
+        // Add proxy environment variables
+        ...proxyEnv
       } as { [key: string]: string };
       
       

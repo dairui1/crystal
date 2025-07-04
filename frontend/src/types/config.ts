@@ -10,4 +10,8 @@ export interface AppConfig {
   stravuApiKey?: string;
   stravuServerUrl?: string;
   theme?: 'light' | 'dark';
+  httpProxy?: string;
+  httpsProxy?: string;
+  allProxy?: string;
+  noProxy?: string;
 }

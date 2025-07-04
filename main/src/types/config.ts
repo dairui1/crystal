@@ -16,6 +16,11 @@ export interface AppConfig {
   stravuServerUrl?: string;
   // Theme preference
   theme?: 'light' | 'dark';
+  // Proxy configuration
+  httpProxy?: string;
+  httpsProxy?: string;
+  allProxy?: string;
+  noProxy?: string;
 }
 
 export interface UpdateConfigRequest {
@@ -28,4 +33,8 @@ export interface UpdateConfigRequest {
   stravuApiKey?: string;
   stravuServerUrl?: string;
   theme?: 'light' | 'dark';
+  httpProxy?: string;
+  httpsProxy?: string;
+  allProxy?: string;
+  noProxy?: string;
 }
